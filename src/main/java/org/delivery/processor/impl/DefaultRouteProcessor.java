@@ -1,6 +1,5 @@
 package org.delivery.processor.impl;
 
-import org.delivery.exception.ValidationException;
 import org.delivery.model.Delivery;
 import org.delivery.model.Monitoring;
 import org.delivery.processor.RouteProcessor;
@@ -8,16 +7,32 @@ import org.delivery.processor.RouteProcessor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
-public class DefaultRouteProcessor implements RouteProcessor {
+public class DefaultRouteProcessor implements RouteProcessor, Callable<Monitoring> {
 
     private final static Logger LOGGER = Logger.getLogger(DefaultRouteProcessor.class.getName());
 
     private final static String[] DIRECTIONS = new String[]{"N","E","S","W"};
 
+    private Delivery delivery;
+
+    public DefaultRouteProcessor() {
+        // Default constructor
+    }
+
+    public DefaultRouteProcessor(Delivery delivery) {
+        this.delivery = delivery;
+    }
+
     @Override
-    public Optional<Monitoring> process(Delivery delivery) throws ValidationException {
+    public Monitoring call() throws Exception {
+        return process(this.delivery).get();
+    }
+
+    @Override
+    public Optional<Monitoring> process(Delivery delivery) {
 
         StringBuilder instructionText = new StringBuilder("DRONE " + delivery.getDrone() + " WORKING\n");
 
@@ -65,6 +80,10 @@ public class DefaultRouteProcessor implements RouteProcessor {
                         break;
                 }
             }
+            if (Math.abs(x) > 10 || Math.abs(y) > 10) {
+                LOGGER.warning(String.format("DRONE %d is out of allowed area, please check the route", delivery.getDrone()));
+            }
+
             positions.add(String.format("(%d,%d) direction %s", x, y, DIRECTIONS[direction]));
             numDelivery++;
         }
@@ -73,5 +92,4 @@ public class DefaultRouteProcessor implements RouteProcessor {
         Monitoring monitoring = new Monitoring(delivery.getDrone(), positions);
         return Optional.of(monitoring);
     }
-
 }

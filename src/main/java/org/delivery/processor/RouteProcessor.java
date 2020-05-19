@@ -9,5 +9,5 @@ import java.util.Optional;
 @FunctionalInterface
 public interface RouteProcessor {
 
-    Optional<Monitoring> process(Delivery delivery) throws ValidationException;
+    Optional<Monitoring> process(Delivery delivery);
 }

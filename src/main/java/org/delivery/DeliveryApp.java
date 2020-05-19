@@ -20,18 +20,18 @@ public class DeliveryApp {
 
     private static final String DEFAULT_RESTAURANT = "restaurant1";
 
-    private static void processDeliveries(String restaurant) throws ValidationException, IOException {
+    private static void processDeliveries(String restaurant) throws Exception {
 
         // Read deliveries
         List<Delivery> deliveries = FileUtils.readDeliveries(restaurant);
 
         // Process deliveries
         DeliveryProcessor processor = new DefaultDeliveryProcessor();
-        Optional<List<Monitoring>> monitorings = processor.process(deliveries);
+        Optional<List<Monitoring>> monitors = processor.process(deliveries);
 
-        if (monitorings.isPresent()) {
+        if (monitors.isPresent()) {
             // Write monitoring positions
-            FileUtils.writeMonitoring(restaurant, monitorings.get());
+            FileUtils.writeMonitoring(restaurant, monitors.get());
         } else {
             LOGGER.severe("Error processing delivery routes for restaurant " + restaurant);
         }
@@ -62,6 +62,10 @@ public class DeliveryApp {
 
         } catch (IOException e) {
             LOGGER.severe("Error reading delivery input files in restaurant: " + restaurant);
+            e.printStackTrace();
+
+        } catch (Exception e) {
+            LOGGER.severe("Error: " + e.getMessage());
             e.printStackTrace();
         }
     }
