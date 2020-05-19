@@ -1,0 +1,3 @@
+(2,3) direction E
+(2,2) direction S
+(10,0) direction E

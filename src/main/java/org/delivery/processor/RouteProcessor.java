@@ -6,6 +6,9 @@ import org.delivery.model.Monitoring;
 
 import java.util.Optional;
 
+/**
+ * Processor of the route plan for a single drone.
+ */
 @FunctionalInterface
 public interface RouteProcessor {
 

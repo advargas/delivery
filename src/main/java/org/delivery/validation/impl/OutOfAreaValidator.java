@@ -11,11 +11,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Validator to check only valid characters AID in routes.
+ * Validator to check routes out of area.
  */
-public class InvalidSymbolValidator implements DeliveryValidator {
+public class OutOfAreaValidator implements DeliveryValidator {
 
-    private final static Pattern pattern = Pattern.compile("[aAiIdD]+");
+    private String wrongArea = "";
+
+    public OutOfAreaValidator() {
+        int maxAreaSteps = ApplicationConfig.getMaxAreaSteps();
+        for(int i = 0; i <= maxAreaSteps; i++){
+            wrongArea += "A";
+        }
+    }
 
     @Override
     public Optional<List<String>> validate(List<Delivery> deliveries) {
@@ -24,9 +31,8 @@ public class InvalidSymbolValidator implements DeliveryValidator {
         if (deliveries != null && !deliveries.isEmpty()) {
             for (Delivery delivery : deliveries) {
                 for (String route : delivery.getRoutes()) {
-                    Matcher matcher = pattern.matcher(route);
-                    if (!matcher.matches()) {
-                        errors.add(String.format("Invalid route [%s], only AID characters are allowed", route));
+                    if (route.toUpperCase().contains(wrongArea)) {
+                        errors.add(String.format("Invalid route [%s], drone out of area", route));
                     }
                 }
             }

@@ -1,5 +1,6 @@
 package org.delivery.processor.impl;
 
+import org.delivery.config.ApplicationConfig;
 import org.delivery.model.Delivery;
 import org.delivery.model.Monitoring;
 import org.delivery.processor.RouteProcessor;
@@ -10,6 +11,10 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
+/**
+ * Default implementation of the processor of the route plan for a single drone.
+ * It follows the specific input format of routes AID and calculates the final position per route.
+ */
 public class DefaultRouteProcessor implements RouteProcessor, Callable<Monitoring> {
 
     private final static Logger LOGGER = Logger.getLogger(DefaultRouteProcessor.class.getName());
@@ -37,6 +42,7 @@ public class DefaultRouteProcessor implements RouteProcessor, Callable<Monitorin
         StringBuilder instructionText = new StringBuilder("DRONE " + delivery.getDrone() + " WORKING\n");
 
         List<String> positions = new ArrayList<>();
+        int maxAreaSteps = ApplicationConfig.getMaxAreaSteps();
         int numDelivery = 1;
 
         for (String route : delivery.getRoutes()) {
@@ -80,7 +86,7 @@ public class DefaultRouteProcessor implements RouteProcessor, Callable<Monitorin
                         break;
                 }
             }
-            if (Math.abs(x) > 10 || Math.abs(y) > 10) {
+            if (Math.abs(x) > maxAreaSteps || Math.abs(y) > maxAreaSteps) {
                 LOGGER.warning(String.format("DRONE %d is out of allowed area, please check the route", delivery.getDrone()));
             }
 

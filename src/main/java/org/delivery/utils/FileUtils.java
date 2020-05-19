@@ -17,6 +17,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * Utility class to read input routes and write monitoring information to output files.
+ */
 public class FileUtils {
 
     private final static Logger LOGGER = Logger.getLogger(FileUtils.class.getName());

@@ -2,6 +2,9 @@ package org.delivery.model;
 
 import java.util.List;
 
+/**
+ * Output monitoring model.
+ */
 public class Monitoring {
 
     private String drone;
