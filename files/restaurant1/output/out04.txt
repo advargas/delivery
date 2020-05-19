@@ -1,0 +1,3 @@
+(-3,3) direction W
+(2,2) direction W
+(-2,2) direction E

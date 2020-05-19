@@ -12,6 +12,10 @@ import org.delivery.validation.impl.InvalidSymbolValidator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 public class DefaultDeliveryProcessor implements DeliveryProcessor {
@@ -19,25 +23,35 @@ public class DefaultDeliveryProcessor implements DeliveryProcessor {
     private final static Logger LOGGER = Logger.getLogger(DefaultDeliveryProcessor.class.getName());
 
     @Override
-    public Optional<List<Monitoring>> process(List<Delivery> deliveries) throws ValidationException {
+    public Optional<List<Monitoring>> process(List<Delivery> deliveries) throws Exception {
 
         // Validate deliveries
         if (validate(deliveries)) {
-            RouteProcessor routeProcessor = new DefaultRouteProcessor();
-            List<Monitoring> monitorings = new ArrayList<>();
 
-            LOGGER.info("Processing deliveries ...");
+            LOGGER.info("Processing deliveries concurrently ...");
+
+            // Initiates a thread pool with the number of groups (workers)
+            ExecutorService executorService = Executors.newFixedThreadPool(deliveries.size());
+
+            // Adds the tasks
+            List<DefaultRouteProcessor> callableTasks = new ArrayList<>();
+
             for (Delivery delivery : deliveries) {
-                Optional<Monitoring> monitoring = routeProcessor.process(delivery);
-
-                if (monitoring.isPresent()) {
-                    monitorings.add(monitoring.get());
-                } else {
-                    throw new ValidationException(String.format("Error creating monitoring report for drone %s",
-                            delivery.getDrone()));
-                }
+                callableTasks.add(new DefaultRouteProcessor(delivery));
             }
-            return Optional.of(monitorings);
+
+            // Invokes all workers and awaits for the response asynchronously
+            List<Future<Monitoring>> futures = executorService.invokeAll(callableTasks);
+
+            List<Monitoring> monitors = new ArrayList<>();
+            for (Future<Monitoring> future : futures) {
+                monitors.add(future.get());
+            }
+
+            // Shutdowns the ExecutorService
+            executorService.shutdown();
+
+            return Optional.of(monitors);
         }
         return Optional.empty();
     }
