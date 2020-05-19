@@ -2,6 +2,9 @@ package org.delivery.model;
 
 import java.util.List;
 
+/**
+ * Input delivery model.
+ */
 public class Delivery {
 
     private String drone;

@@ -5,6 +5,9 @@ import org.delivery.model.Delivery;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Validators contract.
+ */
 @FunctionalInterface
 public interface DeliveryValidator {
 

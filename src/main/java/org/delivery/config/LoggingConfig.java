@@ -6,6 +6,9 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
+/**
+ * Logging configuration.
+ */
 public class LoggingConfig {
 
     private static final String LOGGING_FILE_PATH = "/logging.properties";

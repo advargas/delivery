@@ -18,6 +18,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
+/**
+ * Default implementation of the processor for all drones.
+ * It operates each drone concurrently.
+ *
+ */
 public class DefaultDeliveryProcessor implements DeliveryProcessor {
 
     private final static Logger LOGGER = Logger.getLogger(DefaultDeliveryProcessor.class.getName());
@@ -54,24 +59,5 @@ public class DefaultDeliveryProcessor implements DeliveryProcessor {
             return Optional.of(monitors);
         }
         return Optional.empty();
-    }
-
-    private boolean validate(List<Delivery> deliveries) throws ValidationException {
-
-        if (deliveries == null || deliveries.isEmpty()) {
-            throw new ValidationException("Set of deliveries is empty");
-        }
-
-        final List<DeliveryValidator> validators = new ArrayList<>();
-        validators.add(new DeliverySizeValidator());
-        validators.add(new InvalidSymbolValidator());
-
-        for (final DeliveryValidator validator : validators) {
-            final Optional<List<String>> errors = validator.validate(deliveries);
-            if (errors.isPresent() && !errors.get().isEmpty()) {
-                throw new ValidationException(errors.get());
-            }
-        }
-        return true;
     }
 }

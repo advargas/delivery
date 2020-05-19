@@ -14,13 +14,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+/**
+ * Main class.
+ */
 public class DeliveryApp {
 
     private final static Logger LOGGER = Logger.getLogger(DeliveryApp.class.getName());
 
     private static final String DEFAULT_RESTAURANT = "restaurant1";
 
-    private static void processDeliveries(String restaurant) throws Exception {
+    public static void processDeliveries(String restaurant) throws Exception {
 
         // Read deliveries
         List<Delivery> deliveries = FileUtils.readDeliveries(restaurant);

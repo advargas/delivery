@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Validator to check maximum number of drones and deliveries per drone.
+ */
 public class DeliverySizeValidator implements DeliveryValidator {
 
     @Override
